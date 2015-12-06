@@ -10,9 +10,16 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 
 public class Gearth {
+    JFrame mainJF = new JFrame("地震重力数据处理系统");
 
-    JTextArea zjk_jtr = new JTextArea();
-    JScrollPane zjk_jsp = new JScrollPane(zjk_jtr);
+    JPanel backgroundJP = new JPanel();
+    JPanel eternaJP     = new JPanel();
+
+
+//------
+/*
+    //JTextArea zjk_jtr = new JTextArea();
+    //JScrollPane zjk_jsp = new JScrollPane(zjk_jtr);
     JPanel jp_south = new JPanel();
     JPanel jp_north = new JPanel();
     JPanel jp_card = new JPanel(new CardLayout());
@@ -29,19 +36,88 @@ public class Gearth {
     // zjk.ini path and ZJK2012.PRN path
     File zjk_file = new File("Eterna34\\bin\\zjk.INI");
     File zjk2012_file = new File("Eterna34\\bin\\ZJK2012.PRN");
+*/
 
     public  void createAndShowGUI() {
-        JFrame f = new JFrame("地震重力数据处理系统");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setSize(600,400);
-        f.setVisible(true);
-        f.setLayout(new BorderLayout());
+        // init main frame
+        mainJF.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainJF.setSize(600, 400);
+        mainJF.setVisible(true);
+        mainJF.setLayout(new BorderLayout());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        f.setLocation(dim.width/2-f.getSize().width/2, dim.height/2-f.getSize().height/2);
+        mainJF.setLocation(dim.width/2 - mainJF.getSize().width/2, dim.height/2 - mainJF.getSize().height/2);
 
-        // add jpanel
-        JPanel jp_background = new JPanel();
-        JPanel jp_button = new JPanel();
+        // set background panel
+        backgroundJP.setLayout(new BorderLayout(mainJF.getSize().width, mainJF.getSize().height));
+        backgroundJP.setBackground(Color.WHITE);
+        mainJF.add(backgroundJP);
+
+        // set menubar and menu
+        JMenuBar menubar = new JMenuBar();
+        mainJF.add(menubar, BorderLayout.NORTH);
+        // menu1
+        JMenu menu1 = new JMenu("Gearth(G)");
+        menubar.add(menu1);
+        menu1.setMnemonic(KeyEvent.VK_G);
+        JMenuItem item1_1 = new JMenuItem("退出");
+        menu1.add(item1_1);
+        item1_1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+        item1_1.addActionListener(new ExitListener());
+        // menu2
+        JMenu menu2=new JMenu("数据采集(S)");
+        menubar.add(menu2);
+        menu2.setMnemonic(KeyEvent.VK_S);
+        JMenuItem item2_1 = new JMenuItem("参数设置");
+        JMenuItem item2_2 = new JMenuItem("数据采集");
+        JMenuItem item2_3 = new JMenuItem("数据有效性");
+        menu2.add(item2_1);
+        menu2.add(item2_2);
+        menu2.add(item2_3);
+        // menu3
+        JMenu menu3=new JMenu("预处理(Y)");
+        menubar.add(menu3);
+        menu3.setMnemonic(KeyEvent.VK_Y);
+        JMenuItem item3_1 = new JMenuItem("安装Tsoft插件");
+        JMenuItem item3_2 = new JMenuItem("管理与分析");
+        JMenuItem item3_3 = new JMenuItem("Tsoft");
+        JMenuItem item3_4 = new JMenuItem("调和分析");
+        menu3.add(item3_1);
+        menu3.add(item3_2);
+        menu3.add(item3_3);
+        menu3.add(item3_4);
+        item3_1.addActionListener(new InstallTsoftListener());
+        item3_3.addActionListener(new RunTsoftListener());
+        // menu4
+        JMenu menu4=new JMenu("精密处理(J)");
+        menubar.add(menu4);
+        menu4.setMnemonic(KeyEvent.VK_J);
+        JMenuItem item4_1 = new JMenuItem("获取非潮汐分量");
+        JMenuItem item4_2 = new JMenuItem("计算功率谱");
+        JMenuItem item4_3 = new JMenuItem("地震信号提取");
+        JMenuItem item4_4 = new JMenuItem("分析噪声相关性");
+        menu4.add(item4_1);
+        menu4.add(item4_2);
+        menu4.add(item4_3);
+        menu4.add(item4_4);
+        // menu5
+        JMenu menu5=new JMenu("结果显示(I)");
+        menubar.add(menu5);
+        menu5.setMnemonic(KeyEvent.VK_I);
+        JMenuItem item5_1 = new JMenuItem("结果显示");
+        JMenuItem item5_2 = new JMenuItem("结果应用");
+        menu5.add(item5_1);
+        menu5.add(item5_2);
+        // menu6
+        JMenu menu6=new JMenu("帮助(H)");
+        menubar.add(menu6);
+        menu6.setMnemonic(KeyEvent.VK_B);
+        JMenuItem item6_1 = new JMenuItem("关于");
+        JMenuItem item6_2 = new JMenuItem("帮助");
+        menu6.add(item6_1);
+        menu6.add(item6_2);
+
+//------    
+/*
 
         // card layout
         JPanel jp_card_zjk = new JPanel();
@@ -62,80 +138,13 @@ public class Gearth {
         jp_south.add(new JPanel(), BorderLayout.SOUTH);
         jp_south.setVisible(false);
 
-        // menubar
-        JMenuBar menubar = new JMenuBar();
-        f.add(menubar, BorderLayout.NORTH);
-
-        // add jmenu
-        JMenu menu1=new JMenu("Gearth(G)");
-        menu1.setMnemonic(KeyEvent.VK_G);
-
-        // jmenu
-        JMenu menu2=new JMenu("数据采集(S)");
-        menu2.setMnemonic(KeyEvent.VK_S);
-
-        JMenu menu3=new JMenu("预处理(Y)");
-        menu3.setMnemonic(KeyEvent.VK_Y);
-
-        JMenu menu4=new JMenu("精密处理(J)");
-        menu4.setMnemonic(KeyEvent.VK_J);
-
-        JMenu menu5=new JMenu("结果显示(I)");
-        menu5.setMnemonic(KeyEvent.VK_I);
-
-        JMenu menu6=new JMenu("帮助(H)");
-        menu6.setMnemonic(KeyEvent.VK_B);
-
-        menubar.add(menu1);
-        menubar.add(menu2);
-        menubar.add(menu3);
-        menubar.add(menu4);
-        menubar.add(menu5);
-        menubar.add(menu6);
-
-        //menuitem
-        JMenuItem item11_1=new JMenuItem("退出");
-        menu1.add(item11_1);
-        item11_1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-                ActionEvent.CTRL_MASK));
-
-        item11_1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-
-        JMenuItem item12_1 = new JMenuItem("参数设置"),
-                item12_2 = new JMenuItem("数据采集"),
-                item12_3 = new JMenuItem("数据有效性");
-        menu2.add(item12_1);menu2.add(item12_2);menu2.add(item12_3);
-
-        JMenuItem item13_0 = new JMenuItem("安装Tsoft插件"),
-                item13_1 = new JMenuItem("管理与分析"),
-                item13_2 = new JMenuItem("Tsoft"),
-                item13_3 = new JMenuItem("调和分析");
-        menu3.add(item13_0);menu3.add(item13_1);menu3.add(item13_2);menu3.add(item13_3);
-
-        JMenuItem item14_1 = new JMenuItem("获取非潮汐分量"),
-                item14_2 = new JMenuItem("计算功率谱"),
-                item14_3 = new JMenuItem("地震信号提取"),
-                item14_4 = new JMenuItem("分析噪声相关性");
-        menu4.add(item14_1);menu4.add(item14_2);menu4.add(item14_3);menu4.add(item14_4);
-
-        JMenuItem item15_1 = new JMenuItem("结果显示"),
-                item15_2 = new JMenuItem("结果应用");
-        menu5.add(item15_1);menu5.add(item15_2);
-
-        JMenuItem item16_1 = new JMenuItem("关于"),
-                item16_2 = new JMenuItem("帮助");
-        menu6.add(item16_1);menu6.add(item16_2);
 
         // zjk.ini jtextarea
         jp_background.setLayout(new BorderLayout(10, 10));
         jp_background.add(jp_card, BorderLayout.CENTER);
         jp_card_zjk.setLayout(new BorderLayout());
-        jp_card_zjk.add(zjk_jsp, BorderLayout.CENTER);
-        zjk_jsp.setVisible(false);
+        //jp_card_zjk.add(zjk_jsp, BorderLayout.CENTER);
+        //zjk_jsp.setVisible(false);
 
         // jbutton
         JButton jb_save = new JButton("Save"),
@@ -157,17 +166,6 @@ public class Gearth {
         JScrollPane ZJK2012_PRN_jsp = new JScrollPane(zjk2012_jtr);
         jp_card_ZJK2012_PRN.add(ZJK2012_PRN_jsp, BorderLayout.CENTER);
 
-        // function copy tsoft dir to d:
-        item13_0.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent event){
-                try{
-                        gearth.copyFolder(tsoft_src, tsoft_dest);
-                        JOptionPane.showMessageDialog(null, "TSoft安装完毕！");
-                }catch(Exception ex){
-                    ex.printStackTrace();
-                }
-            }
-        });
 
         // run soft.exe
         item13_2.addActionListener(new ActionListener(){
@@ -184,6 +182,7 @@ public class Gearth {
         item13_3.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
                 try{
+                    /*
                     zjk_jsp.setVisible(true);
                     jp_south.setVisible(true);
                     cl.show(jp_card, "zjk");
@@ -195,6 +194,7 @@ public class Gearth {
                         zjk_jtr.append(line + "\n");
                         line = in.readLine();
                     }
+                    * /
                 }catch(Exception ex){
                     ex.printStackTrace();
                 }
@@ -234,12 +234,14 @@ public class Gearth {
         jb_zjk2012_prn_button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 try {
+                    /*
                     BufferedReader in = new BufferedReader(new FileReader(zjk2012_file));
                     String line = in.readLine();
                     while(line != null){
                         zjk_jtr.append(line + "\n");
                         line = in.readLine();
                     }
+                    * /
                 }
                 catch (Exception gg)
                 {
@@ -252,6 +254,7 @@ public class Gearth {
     // file save
     public void btn_save(){
        // File file = null;
+        /*
         FileWriter out=null;
         try {
             out = new FileWriter(zjk_file);
@@ -261,6 +264,29 @@ public class Gearth {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        */
+    }
+
+    class ExitListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
+        }
+    }
+
+    class InstallTsoftListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            try{
+                gearth.copyFolder(tsoft_src, tsoft_dest);
+                JOptionPane.showMessageDialog(null, "TSoft安装完毕！");
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    class RunTsoftListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
         }
     }
 
@@ -291,7 +317,7 @@ public class Gearth {
                    input.close(); 
                } 
                if(temp.isDirectory()){ // sub folder
-                   copyFolder(oldPath+"/"+file[i],newPath+"/"+file[i]); 
+                   copyFolder(oldPath + "/" + file[i], newPath + "/" + file[i]); 
                } 
            } 
        } 
